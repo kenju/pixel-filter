@@ -1,11 +1,10 @@
-import React, { memo, useState, useRef } from "react"
+import React, { useState } from "react"
 import { StaticQuery, graphql } from "gatsby"
-import Img from "gatsby-image"
 
 import containerStyles from "./PhotoContainer.module.css"
 import Filter from "../filter/Filter"
 
-export default memo(function PhotoContainer({
+export default function PhotoContainer({
   effectName,
 }) {
   const [converted, setConverted] = useState(false)
@@ -13,10 +12,8 @@ export default memo(function PhotoContainer({
   const filter = new Filter();
 
   function handleOnLoad({ target }) {
-    console.log(`handleOnLoad`)
     if (!converted) {
       setConverted(true)
-
       filter.process(target);
     }
   }
@@ -49,4 +46,4 @@ export default memo(function PhotoContainer({
       }
     />
   );
-})
+}

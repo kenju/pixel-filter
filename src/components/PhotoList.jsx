@@ -1,5 +1,4 @@
 import React from "react"
-import Img from "gatsby-image"
 import PhotoContainer from "../components/PhotoContainer";
 
 export default function PhotoList() {
