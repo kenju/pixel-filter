@@ -1,9 +1,7 @@
 {
   "name": "pixel-filter",
-  "private": true,
-  "description": "A simplified bare-bones starter for Gatsby",
+  "description": "Pixel Filter web application",
   "version": "0.1.0",
-  "license": "MIT",
   "scripts": {
     "build": "gatsby build",
     "develop": "gatsby develop",
