@@ -10,7 +10,7 @@ export default class Filter {
     let effect = img.dataset.effect;
 
     pixels = this.getPixels(img);
-    worker = new Worker('./worker.js');
+    worker = new Worker('./Worker.js');
     obj = {
         pixels: pixels,
         effects: effect

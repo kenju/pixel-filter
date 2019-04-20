@@ -1,6 +1,362 @@
-Worker.filter = {};
+onmessage = function(e){
+  postMessage(process(e.data))
+};
 
-Worker.filter.enhance = function (pix) {
+function process(imgd){
+  let effect  = imgd.effects // effect name
+  let pixraw  = imgd.pixels  // context.getImageData()
+  let pix     = pixraw.data  // image data (pixels)
+  let width   = pixraw.width
+  let height  = pixraw.height
+
+  importScripts(
+    'lagrange.js',
+  );
+
+  switch(effect){
+    case 'lark':
+      lark(pix);
+      break;
+    case 'reyes':
+      reyes(pix);
+      break;
+    case 'juno':
+      juno(pix);
+      break;
+    case 'slumber':
+      slumber(pix);
+      break;
+    case 'crema':
+      crema(pix);
+      break;
+    case 'ludwig':
+      ludwig(pix);
+      break;
+    case 'aden':
+      aden(pix);
+      break;
+    case 'perpetua':
+      perpetua(pix);
+      break;
+    case 'amaro':
+      amaro(pix);
+      break;
+    case 'mayfair':
+      mayfair(pix);
+      break;
+    case 'rise':
+      rise(pix);
+      break;
+    case 'hudson':
+      hudson(pix);
+      break;
+    case 'valencia':
+      valencia(pix);
+      break;
+    case 'xpro2':
+      xpro2(pix);
+      break;
+    case 'sierra':
+      sierra(pix);
+      break;
+    case 'willow':
+      willow(pix);
+      break;
+    case 'lofi':
+      lofi(pix);
+      break;
+    case 'earlybird':
+      earlybird(pix);
+      break;
+    case 'brannan':
+      brannan(pix);
+      break;
+    case 'inkwell':
+      inkwell(pix);
+      break;
+    case 'hefe':
+      hefe(pix);
+      break;
+    case 'nashville':
+      nashville(pix);
+      break;
+    case 'sutro':
+      sutro(pix);
+      break;
+    case 'toaster':
+      toaster(pix);
+      break;
+    case 'walden':
+      walden(pix);
+      break;
+    case 'nineteenSeventySeven':
+      nineteenSeventySeven(pix);
+      break;
+    case 'kelvin':
+      kelvin(pix);
+      break;
+    case 'grayscale':
+      grayscale(pix);
+      break;
+    case 'sepia':
+      sepia(pix);
+      break;
+    case 'luminance':
+      luminance(pix);
+      break;
+    case 'brighten':
+      brighten(pix, 50);
+      break;
+    case 'darken':
+      darken(pix, 50);
+      break;
+    case 'opacity':
+      opacity(pix, 0.5);
+      break;
+    case 'threshold':
+      threshold(pix);
+      break;
+    case 'negaposi':
+      negaposi(pix);
+      break;
+    case 'brightnesscontrast':
+      brightnessContrast(pix, -0.08, 1.5);
+      break;
+    case 'huerotate':
+      hueRotate(pix, 45);
+      break;
+    case 'saturate':
+      saturate(pix, 20);
+      break;
+    case 'horizontalflip':
+      horizontalFlip(pix, width, height);
+      break;
+    case 'verticalflip':
+      verticalFlip(pix, width, height);
+      break;
+    case 'doubleflip':
+      doubleFlip(pix);
+      break;
+    case 'horizontalmirror':
+      horizontalMirror(pix, width, height);
+      break;
+    case 'verticalmirror':
+      verticalMirror(pix, width, height);
+      break;
+    case 'xymirror':
+      XYMirror(pix);
+      break;
+    default:
+      enhance(pix);
+      break;
+  }
+  imgd['pixels'].data = pix;
+  return imgd;
+};
+
+/***
+ * Util
+ */
+function clone(obj) {
+    var copy;
+
+    // Handle the 3 simple types, and null or undefined
+    if (null == obj || "object" != typeof obj) return obj;
+
+    // Handle Date
+    if (obj instanceof Date) {
+        copy = new Date();
+        copy.setTime(obj.getTime());
+        return copy;
+    }
+
+    // Handle Array
+    if (obj instanceof Array) {
+        copy = [];
+        for (var i = 0, len = obj.length; i < len; i++) {
+            copy[i] = clone(obj[i]);
+        }
+        return copy;
+    }
+
+    // Handle Object
+    if (obj instanceof Object) {
+        copy = {};
+        for (var attr in obj) {
+            if (obj.hasOwnProperty(attr)) copy[attr] = clone(obj[attr]);
+        }
+        return copy;
+    }
+
+    throw new Error("Unable to copy obj! Its type isn't supported.");
+};
+
+function getUnit8Array(len) {
+  return new Uint8Array(len);
+};
+
+
+function identityLUT() {
+  var lut = getUnit8Array(256);
+  for (var i=0; i<lut.length; i++) {
+    lut[i] = i;
+  }
+  return lut;
+};
+
+// apply LUT(Look-Up-Table)
+function applyLUT(pix, lut) {
+  var
+    i,
+    pix_result  = clone(pix), // clone objects, and not shallow copy nor reference
+    red         = lut.red,
+    green       = lut.green,
+    blue        = lut.blue,
+    alpha       = lut.alpha,
+    len         = pix.length
+  ;
+  for (i = 0; i < len; i+=4) {
+    pix[i]   = red[pix_result[i]];
+    pix[i+1] = green[pix_result[i+1]];
+    pix[i+2] = blue[pix_result[i+2]];
+    pix[i+3] = alpha[pix_result[i+3]];
+  }
+};
+
+// http://axonflux.com/handy-rgb-to-hsl-and-rgb-to-hsv-color-model-c
+function rgb2hsl(r, g, b){
+  var max, min, h, s, l, diff;
+
+  r = r/255;
+  g = g/255;
+  b = b/255;
+
+  max = Math.max(r, g, b);
+  min = Math.min(r, g, b);
+
+  if (max === min) {
+    h = s = 0; //achromatic
+  } else {
+    diff = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch(max){
+      case r:
+        h = (g - b) / d + (g < b ? 6 : 0);
+        break;
+      case g:
+        h = (b - r) / d + 2;
+        break;
+      case b:
+        h = (r -g ) / d + 4;
+        break;
+    }
+    h /= 6;
+  }
+  return [h, s, l];
+};
+
+function hsl2rgb(h, s, v){
+  var r, g, b, q, p;
+
+  if( s === 0 ){
+    r = g = b = l; //achromatic
+  } else {
+    q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    p = 2 * l - q;
+    r = this.hue2rgb(p, q, h + 1/3);
+    g = this.hue2rgb(p, q, h);
+    b = this.hue2rgb(p, q, h - 1/3);
+  }
+  return [r * 255, g * 255, b * 255];
+};
+
+function hue2rgb(p, q, t){
+  switch(t){
+    case t < 0 :
+      t += 1;
+      break;
+    case t > 1 :
+      t -= 1;
+      break;
+    case t < 1/6 :
+      return p + (q - p) * 6 * t;
+    case t < 1/2 :
+      return q;
+    case t < 2/3 :
+      return p + (q - p) * (2/3 - t) * 6;
+      return p;
+  }
+};
+
+function rgb2hsv(r, g, b){
+  var max, min, h, s, v, diff;
+  r = r/255;
+  g = g/255;
+  b = b/255;
+
+  max = Math.max(r, g, b);
+  min = Math.min(r, g, b);
+  v = max; // value
+
+  diff = max - min;
+  s = max === 0 ? 0 : diff/max;
+
+  if(max === min){
+    h = 0; //achromatic
+  }else{
+    switch(max){
+      case r:
+        h = (g - b) / diff + (g < b ? 6 : 0);
+        break;
+      case g:
+        h = (b - r) / diff + 2;
+        break;
+      case b:
+        h = (r - g) / diff + 4;
+        break;
+    }
+    h /= 6;
+  }
+  return [h, s, v];
+};
+
+function hsv2rgb(h, s, v){
+  var r, g, b, i, f, p, q, t;
+
+  i = Math.floor(h * 6); // iterator
+  f = h * 6 - i;
+  p = v * (1 - s);
+  q = v * (1 - f * s);
+  t = v * (1 - (1 - f) * s);
+
+  switch(i % 6){
+    case 0:
+      r = v, g = t, b = p;
+      break;
+    case 1:
+      r = q, g = v, b = p;
+      break;
+    case 2:
+      r = p, g = v, b = t;
+      break;
+    case 3:
+      r = p, g = q, b = v;
+      break;
+    case 4:
+      r = t, g = p, b = v;
+      break;
+    case 5:
+      r = v, g = p, b = q;
+      break;
+  }
+
+  return [r * 255, g * 255, b * 255];
+};
+
+/***
+ * Effect functions
+ */
+function enhance(pix) {
     for (var i = 0, n = pix.length; i < n; i += 4) {
         pix[i] = pix[i] * 1.24; // red
         pix[i + 1] = pix[i + 1] * 1.33; // green
@@ -8,7 +364,7 @@ Worker.filter.enhance = function (pix) {
     }
 };
 
-Worker.filter.grayscale = function (pix) {
+function grayscale(pix) {
     for (var i = 0, n = pix.length; i < n; i += 4) {
         // calculated from NTSC
         var grayscale = pix[i] * .29 + pix[i + 1] * .58 + pix[i + 2] * .11;
@@ -18,7 +374,7 @@ Worker.filter.grayscale = function (pix) {
     }
 };
 
-Worker.filter.sepia = function (pix) {
+function sepia(pix) {
     for (var i = 0, n = pix.length; i < n; i += 4) {
         pix[i] = pix[i] * 1.07;
         pix[i + 1] = pix[i + 1] * .74;
@@ -27,7 +383,7 @@ Worker.filter.sepia = function (pix) {
 };
 
 //@see http://stackoverflow.com/questions/596216/formula-to-determine-brightness-of-rgb-color
-Worker.filter.luminance = function (pix) {
+function luminance(pix) {
     for (var i = 0, n = pix.length; i < n; i += 4) {
         var luminance = pix[i] * 0.2126 + pix[i + 1] * 0.7152 + pix[i + 2] * 0.0722;
         pix[i] = luminance;
@@ -36,7 +392,7 @@ Worker.filter.luminance = function (pix) {
     }
 };
 
-Worker.filter.negaposi = function (pix) {
+function negaposi(pix) {
     for (var i = 0, n = pix.length; i < n; i += 4) {
         pix[i] = 255 - pix[i];
         pix[i + 1] = 255 - pix[i + 1];
@@ -44,13 +400,13 @@ Worker.filter.negaposi = function (pix) {
     }
 };
 
-Worker.filter.opacity = function (pix, value) {
+function opacity(pix, value) {
     for (var i = 0, n = pix.length; i < n; i += 4) {
         pix[i + 3] = pix[i + 3] * value;
     }
 };
 
-Worker.filter.brighten = function (pix, value) {
+function brighten(pix, value) {
     for (var i = 0, n = pix.length; i < n; i += 4) {
         pix[i] += value;
         pix[i + 1] += value;
@@ -58,7 +414,7 @@ Worker.filter.brighten = function (pix, value) {
     }
 };
 
-Worker.filter.darken = function (pix, value) {
+function darken(pix, value) {
     for (var i = 0, n = pix.length; i < n; i += 4) {
         pix[i] -= value;
         pix[i + 1] -= value;
@@ -66,7 +422,7 @@ Worker.filter.darken = function (pix, value) {
     }
 };
 
-Worker.filter.threshold = function (pix) {
+function threshold(pix) {
     var
         red,
         green,
@@ -87,63 +443,63 @@ Worker.filter.threshold = function (pix) {
         pix[i + 2] = new_value;
     }
 };
-Worker.filter.hueRotate = function (pix, deg) {
+function hueRotate(pix, deg) {
     for (var i = 0, n = pix.length; i < n; i += 4) {
         var
             hsv,
             rgb
             ;
         // change from rgb to hsv
-        hsv = Worker.util.rgb2hsv(pix[i], pix[i + 1], pix[i + 2]);
+        hsv = rgb2hsv(pix[i], pix[i + 1], pix[i + 2]);
         hsv[0] = hsv[0] * deg / 360; // hue is from 0 to 360
-        rgb = Worker.util.hsv2rgb(hsv[0], hsv[1], hsv[2]);
+        rgb = hsv2rgb(hsv[0], hsv[1], hsv[2]);
         pix[i] = rgb[0];
         pix[i + 1] = rgb[1];
         pix[i + 2] = rgb[2];
     }
 };
-Worker.filter.saturate = function (pix, num) {
+function saturate(pix, num) {
     for (var i = 0, n = pix.length; i < n; i += 4) {
         var hsv;
         var rgb;
         // change from rgb to hsv
-        hsv = Worker.util.rgb2hsv(pix[i], pix[i + 1], pix[i + 2]); // return array
+        hsv = rgb2hsv(pix[i], pix[i + 1], pix[i + 2]); // return array
         // change saturation
         hsv[1] = hsv[1] * num / 100; // saturation is from 0 to 100
         // convert from hsv to rgb
-        rgb = Worker.util.hsv2rgb(hsv[0], hsv[1], hsv[2]);
+        rgb = hsv2rgb(hsv[0], hsv[1], hsv[2]);
         pix[i] = rgb[0];
         pix[i + 1] = rgb[1];
         pix[i + 2] = rgb[2];
     }
 };
 
-Worker.filter.brightnessContrast = function (pix, brightness, contrast) {
+function brightnessContrast(pix, brightness, contrast) {
     var
         contrastAdjust = -128 * contrast + 128,
         brightnessAdjust = 255 * brightness,
         adjust = contrastAdjust + brightnessAdjust,
         i,
-        lut = Worker.util.getUnit8Array(256),
+        lut = getUnit8Array(256),
         len = lut.length
         ;
     for (i = 0; i < len; i++) {
         var c = i * contrast + adjust;
         lut[i] = c < 0 ? 0 : (c > 255 ? 255 : c);
     }
-    return Worker.util.applyLUT(
+    return applyLUT(
         pix,
         {
             red: lut,
             green: lut,
             blue: lut,
-            alpha: Worker.util.identityLUT()
+            alpha: identityLUT()
         }
     );
 };
 
-Worker.filter.horizontalFlip = function (pix, width, height) {
-    var pix_result = Worker.util.clone(pix); // clone objects, and not shallow copy nor reference
+function horizontalFlip(pix, width, height) {
+    var pix_result = clone(pix); // clone objects, and not shallow copy nor reference
     for (var i = 0; i < height; i++) {
         for (var j = 0; j < width; j++) {
             var off = (i * width + j) * 4;
@@ -155,8 +511,8 @@ Worker.filter.horizontalFlip = function (pix, width, height) {
         }
     }
 };
-Worker.filter.verticalFlip = function (pix, width, height) {
-    var pix_result = Worker.util.clone(pix); // clone objects, and not shallow copy nor reference
+function verticalFlip(pix, width, height) {
+    var pix_result = clone(pix); // clone objects, and not shallow copy nor reference
     for (var i = 0; i < height; i++) {
         for (var j = 0; j < width; j++) {
             var off = (i * width + j) * 4;
@@ -168,8 +524,8 @@ Worker.filter.verticalFlip = function (pix, width, height) {
         }
     }
 };
-Worker.filter.doubleFlip = function (pix) {
-    var pix_result = Worker.util.clone(pix); // clone objects, and not shallow copy nor reference
+function doubleFlip(pix) {
+    var pix_result = clone(pix); // clone objects, and not shallow copy nor reference
     var i;
     var len = pix.length;
     for (i = 0; i < len; i += 4) {
@@ -179,7 +535,7 @@ Worker.filter.doubleFlip = function (pix) {
         pix[i + 3] = pix_result[len - i + 3];
     }
 };
-Worker.filter.horizontalMirror = function (pix, width, height) {
+function horizontalMirror(pix, width, height) {
     for (var i = 0; i < height; i++) {
         for (var j = 0; j < width; j++) {
             var off = (i * width + j) * 4;
@@ -191,7 +547,7 @@ Worker.filter.horizontalMirror = function (pix, width, height) {
         }
     }
 };
-Worker.filter.verticalMirror = function (pix, width, height) {
+function verticalMirror(pix, width, height) {
     for (var i = 0; i < height; i++) {
         for (var j = 0; j < width; j++) {
             var off = (i * width + j) * 4;
@@ -203,7 +559,7 @@ Worker.filter.verticalMirror = function (pix, width, height) {
         }
     }
 };
-Worker.filter.XYMirror = function (pix) {
+function XYMirror(pix) {
     var i, len = pix.length;
     for (i = 0; i < len; i += 4) {
         pix[i] = pix[len - i];
@@ -213,7 +569,7 @@ Worker.filter.XYMirror = function (pix) {
     }
 };
 
-Worker.filter.lark = function (pix) {
+function lark(pix) {
     var lag_r = new Lagrange(0, 0, 1, 1);
     var lag_g = new Lagrange(0, 0, 1, 1);
     var lag_b = new Lagrange(0, 0, 1, 1);
@@ -255,7 +611,7 @@ Worker.filter.lark = function (pix) {
     }
 };
 
-Worker.filter.reyes = function (pix) {
+function reyes(pix) {
     var lag_r = new Lagrange(0, 0, 1, 1);
     var lag_g = new Lagrange(0, 0, 1, 1);
     var lag_b = new Lagrange(0, 0, 1, 1);
@@ -297,7 +653,7 @@ Worker.filter.reyes = function (pix) {
     }
 };
 
-Worker.filter.juno = function (pix) {
+function juno(pix) {
     var lag_r = new Lagrange(0, 0, 1, 1);
     var lag_g = new Lagrange(0, 0, 1, 1);
     var lag_b = new Lagrange(0, 0, 1, 1);
@@ -339,7 +695,7 @@ Worker.filter.juno = function (pix) {
     }
 };
 
-Worker.filter.slumber = function (pix) {
+function slumber(pix) {
     var lag_r = new Lagrange(0, 0, 1, 1);
     var lag_g = new Lagrange(0, 0, 1, 1);
     var lag_b = new Lagrange(0, 0, 1, 1);
@@ -381,7 +737,7 @@ Worker.filter.slumber = function (pix) {
     }
 };
 
-Worker.filter.crema = function (pix) {
+function crema(pix) {
     var lag_r = new Lagrange(0, 0, 1, 1);
     var lag_g = new Lagrange(0, 0, 1, 1);
     var lag_b = new Lagrange(0, 0, 1, 1);
@@ -419,7 +775,7 @@ Worker.filter.crema = function (pix) {
     }
 };
 
-Worker.filter.ludwig = function (pix) {
+function ludwig(pix) {
     var lag_r = new Lagrange(0, 0, 1, 1);
     var lag_g = new Lagrange(0, 0, 1, 1);
     var lag_b = new Lagrange(0, 0, 1, 1);
@@ -457,7 +813,7 @@ Worker.filter.ludwig = function (pix) {
     }
 };
 
-Worker.filter.aden = function (pix) {
+function aden(pix) {
     var lag_r = new Lagrange(0, 0, 1, 1);
     var lag_g = new Lagrange(0, 0, 1, 1);
     var lag_b = new Lagrange(0, 0, 1, 1);
@@ -495,7 +851,7 @@ Worker.filter.aden = function (pix) {
     }
 };
 
-Worker.filter.perpetua = function (pix) {
+function perpetua(pix) {
     var lag_r = new Lagrange(0, 0, 1, 1);
     var lag_g = new Lagrange(0, 0, 1, 1);
     var lag_b = new Lagrange(0, 0, 1, 1);
@@ -533,7 +889,7 @@ Worker.filter.perpetua = function (pix) {
     }
 };
 
-Worker.filter.amaro = function (pix) {
+function amaro(pix) {
     var lag_r = new Lagrange(0, 0, 1, 1);
     var lag_g = new Lagrange(0, 0, 1, 1);
     var lag_b = new Lagrange(0, 0, 1, 1);
@@ -575,7 +931,7 @@ Worker.filter.amaro = function (pix) {
     }
 };
 
-Worker.filter.mayfair = function (pix) {
+function mayfair(pix) {
     var lag_r = new Lagrange(0, 0, 1, 1);
     var lag_g = new Lagrange(0, 0, 1, 1);
     var lag_b = new Lagrange(0, 0, 1, 1);
@@ -616,7 +972,7 @@ Worker.filter.mayfair = function (pix) {
     }
 };
 
-Worker.filter.rise = function (pix) {
+function rise(pix) {
     var lag_r = new Lagrange(0, 0, 1, 1);
     var lag_g = new Lagrange(0, 0, 1, 1);
     var lag_b = new Lagrange(0, 0, 1, 1);
@@ -659,7 +1015,7 @@ Worker.filter.rise = function (pix) {
     }
 };
 
-Worker.filter.hudson = function (pix) {
+function hudson(pix) {
     var lag_r = new Lagrange(0, 0, 1, 1);
     var lag_g = new Lagrange(0, 0, 1, 1);
     var lag_b = new Lagrange(0, 0, 1, 1);
@@ -702,7 +1058,7 @@ Worker.filter.hudson = function (pix) {
     }
 };
 
-Worker.filter.valencia = function (pix) {
+function valencia(pix) {
     var lag_r = new Lagrange(0, 0, 1, 1);
     var lag_g = new Lagrange(0, 0, 1, 1);
     var lag_b = new Lagrange(0, 0, 1, 1);
@@ -745,7 +1101,7 @@ Worker.filter.valencia = function (pix) {
     }
 };
 
-Worker.filter.xpro2 = function (pix) {
+function xpro2(pix) {
     var lag_r = new Lagrange(0, 0, 1, 1);
     var lag_g = new Lagrange(0, 0, 1, 1);
     var lag_b = new Lagrange(0, 0, 1, 1);
@@ -788,7 +1144,7 @@ Worker.filter.xpro2 = function (pix) {
     }
 };
 
-Worker.filter.sierra = function (pix) {
+function sierra(pix) {
     var lag_r = new Lagrange(0, 0, 1, 1);
     var lag_g = new Lagrange(0, 0, 1, 1);
     var lag_b = new Lagrange(0, 0, 1, 1);
@@ -832,7 +1188,7 @@ Worker.filter.sierra = function (pix) {
     }
 };
 
-Worker.filter.willow = function (pix) {
+function willow(pix) {
     var lag_r = new Lagrange(0, 0, 1, 1);
     var lag_g = new Lagrange(0, 0, 1, 1);
     var lag_b = new Lagrange(0, 0, 1, 1);
@@ -870,7 +1226,7 @@ Worker.filter.willow = function (pix) {
     }
 };
 
-Worker.filter.lofi = function (pix) {
+function lofi(pix) {
     var lag_r = new Lagrange(0, 0, 1, 1);
     var lag_g = new Lagrange(0, 0, 1, 1);
     var lag_b = new Lagrange(0, 0, 1, 1);
@@ -914,7 +1270,7 @@ Worker.filter.lofi = function (pix) {
     }
 };
 
-Worker.filter.earlybird = function (pix) {
+function earlybird(pix) {
     var lag_r = new Lagrange(0, 0, 1, 1);
     var lag_g = new Lagrange(0, 0, 1, 1);
     var lag_b = new Lagrange(0, 0, 1, 1);
@@ -957,7 +1313,7 @@ Worker.filter.earlybird = function (pix) {
     }
 };
 
-Worker.filter.brannan = function (pix) {
+function brannan(pix) {
     var lag_r = new Lagrange(0, 0, 1, 1);
     var lag_g = new Lagrange(0, 0, 1, 1);
     var lag_b = new Lagrange(0, 0, 1, 1);
@@ -996,7 +1352,7 @@ Worker.filter.brannan = function (pix) {
     }
 };
 
-Worker.filter.inkwell = function (pix) {
+function inkwell(pix) {
     for (var i = 0, n = pix.length; i < n; i += 4) {
         var val = pix[i] * .33 + pix[i + 1] * .58 + pix[i + 2] * .22;
         pix[i] = val;
@@ -1005,7 +1361,7 @@ Worker.filter.inkwell = function (pix) {
     }
 };
 
-Worker.filter.hefe = function (pix) {
+function hefe(pix) {
     var lag_r = new Lagrange(0, 0, 1, 1);
     var lag_g = new Lagrange(0, 0, 1, 1);
     var lag_b = new Lagrange(0, 0, 1, 1);
@@ -1041,7 +1397,7 @@ Worker.filter.hefe = function (pix) {
     }
 };
 
-Worker.filter.nashville = function (pix) {
+function nashville(pix) {
     var lag_r = new Lagrange(0, 0, 1, 1);
     var lag_g = new Lagrange(0, 0, 1, 1);
     var lag_b = new Lagrange(0, 0, 1, 1);
@@ -1082,7 +1438,7 @@ Worker.filter.nashville = function (pix) {
     }
 };
 
-Worker.filter.sutro = function (pix) {
+function sutro(pix) {
     var lag_r = new Lagrange(0, 0, 1, 1);
     var lag_g = new Lagrange(0, 0, 1, 1);
     var lag_b = new Lagrange(0, 0, 1, 1);
@@ -1121,7 +1477,7 @@ Worker.filter.sutro = function (pix) {
     }
 };
 
-Worker.filter.toaster = function (pix) {
+function toaster(pix) {
     var lag_r = new Lagrange(0, 0, 1, 1);
     var lag_g = new Lagrange(0, 0, 1, 1);
     var lag_b = new Lagrange(0, 0, 1, 1);
@@ -1160,7 +1516,7 @@ Worker.filter.toaster = function (pix) {
     }
 };
 
-Worker.filter.walden = function (pix) {
+function walden(pix) {
     var lag_r = new Lagrange(0, 0, 1, 1);
     var lag_g = new Lagrange(0, 0, 1, 1);
     var lag_b = new Lagrange(0, 0, 1, 1);
@@ -1200,7 +1556,7 @@ Worker.filter.walden = function (pix) {
     }
 };
 
-Worker.filter.nineteenSeventySeven = function (pix) {
+function nineteenSeventySeven(pix) {
     var lag_r = new Lagrange(0, 0, 1, 1);
     var lag_g = new Lagrange(0, 0, 1, 1);
     var lag_b = new Lagrange(0, 0, 1, 1);
@@ -1240,7 +1596,7 @@ Worker.filter.nineteenSeventySeven = function (pix) {
     }
 };
 
-Worker.filter.kelvin = function (pix) {
+function kelvin(pix) {
     var lag_r = new Lagrange(0, 0, 1, 1);
     var lag_g = new Lagrange(0, 0, 1, 1);
     var lag_b = new Lagrange(0, 0, 1, 1);
