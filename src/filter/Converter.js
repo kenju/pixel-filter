@@ -1,6 +1,9 @@
-export default function convert(imgd){
-  let effect  = imgd.effects // effect name
-  let pixraw  = imgd.pixels  // context.getImageData()
+export function convert({
+  effects,
+  pixels,
+}){
+  let effect  = effects // effect name
+  let pixraw  = pixels  // context.getImageData()
   let pix     = pixraw.data  // image data (pixels)
   let width   = pixraw.width
   let height  = pixraw.height
@@ -142,8 +145,8 @@ export default function convert(imgd){
       enhance(pix);
       break;
   }
-  imgd['pixels'].data = pix;
-  return imgd;
+
+  return pix;
 };
 
 

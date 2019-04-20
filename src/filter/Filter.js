@@ -7,34 +7,33 @@ export default class Filter {
 
   process(img) {
     const effect = img.dataset.effect;
-    const pixels = this.getPixels(img);
-    const convertedData = convert({
+    const pixels = this.getPixelImageData(img);
+    const convertedPixels = convert({
       pixels: pixels,
       effects: effect
     })
-    this.renderCanvas(img, convertedData.data.pixels);
+    console.log(pixels)
+    console.log(convertedPixels)
+    this.renderCanvas(img, convertedPixels);
   }
 
-  getPixels = function(img) {
-    let canvas
-    let context
-    canvas = this.getCanvas(img.width, img.height);
-    context = canvas.getContext('2d');
+  getPixelImageData = function(img) {
+    const canvas = this.getCanvas(img.width, img.height);
+    const context = canvas.getContext('2d');
     context.drawImage(img, 0, 0);
     return context.getImageData(0, 0, canvas.width, canvas.height);
   };
 
   getCanvas = function(width, height) {
-    let canvas = document.createElement('canvas');
+    const canvas = document.createElement('canvas');
     canvas.width = width;
     canvas.height = height;
     return canvas;
   };
 
   renderCanvas = function(img, new_pixels){
-    let canvas, context;
-    canvas  = this.getCanvas(img.width, img.height);
-    context = canvas.getContext("2d");
+    const canvas  = this.getCanvas(img.width, img.height);
+    const context = canvas.getContext("2d");
     context.putImageData(new_pixels, 0, 0);
     img.src = canvas.toDataURL();
   };
