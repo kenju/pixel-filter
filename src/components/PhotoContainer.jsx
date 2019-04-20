@@ -1,17 +1,24 @@
-import React from "react"
+import React, { memo, useState, useRef } from "react"
 import { StaticQuery, graphql } from "gatsby"
 import Img from "gatsby-image"
 
 import containerStyles from "./PhotoContainer.module.css"
 import Filter from "../filter/Filter"
 
-const filter = new Filter();
+export default memo(function PhotoContainer({
+  effectName,
+}) {
+  const [converted, setConverted] = useState(false)
 
-export default function PhotoContainer() {
+  const filter = new Filter();
+
   function handleOnLoad({ target }) {
     console.log(`handleOnLoad`)
-    // TODO: this causes infinite loop because it triggers React's update
-    // filter.process(target);
+    if (!converted) {
+      setConverted(true)
+
+      filter.process(target);
+    }
   }
 
   return (
@@ -27,22 +34,19 @@ export default function PhotoContainer() {
           }
         }
       `}
-      render={(data) => {
-        console.log(data)
-        return (
-          <div className={containerStyles.container}>
-            <Img fixed={data.fileName.childImageSharp.fixed} />
-            <img
-              className='filter-image'
-              src={data.fileName.childImageSharp.fixed.src}
-              data-effect={'horizontalflip'}
-              alt="random"
-              onLoad={handleOnLoad}
-            />
-          </div>
-          )
-        }
+      render={(data) =>
+        <div
+          className={containerStyles.container}>
+          <h4>{effectName}</h4>
+          <img
+            className='filter-image'
+            src={data.fileName.childImageSharp.fixed.src}
+            data-effect={effectName.toLowerCase()}
+            alt="random"
+            onLoad={handleOnLoad}
+          />
+        </div>
       }
     />
   );
-}
+})
