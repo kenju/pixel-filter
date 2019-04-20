@@ -5,22 +5,20 @@ export default class Filter {
     this.canvas = {}
   }
 
-  process(img) {
-    const effect = img.dataset.effect;
-    const pixels = this.getPixelImageData(img);
-    const convertedPixels = convert({
+  process(imgNode) {
+    const effect = imgNode.dataset.effect;
+    const pixels = this.getImageData(imgNode);
+    const convertedImageData = convert({
       pixels: pixels,
       effects: effect
     })
-    console.log(pixels)
-    console.log(convertedPixels)
-    this.renderCanvas(img, convertedPixels);
+    this.renderCanvas(imgNode, convertedImageData);
   }
 
-  getPixelImageData = function(img) {
-    const canvas = this.getCanvas(img.width, img.height);
+  getImageData = function(imgNode) {
+    const canvas = this.getCanvas(imgNode.width, imgNode.height);
     const context = canvas.getContext('2d');
-    context.drawImage(img, 0, 0);
+    context.drawImage(imgNode, 0, 0);
     return context.getImageData(0, 0, canvas.width, canvas.height);
   };
 
@@ -31,10 +29,10 @@ export default class Filter {
     return canvas;
   };
 
-  renderCanvas = function(img, new_pixels){
-    const canvas  = this.getCanvas(img.width, img.height);
+  renderCanvas = function(imgNode, imageData){
+    const canvas  = this.getCanvas(imgNode.width, imgNode.height);
     const context = canvas.getContext("2d");
-    context.putImageData(new_pixels, 0, 0);
-    img.src = canvas.toDataURL();
+    context.putImageData(imageData, 0, 0);
+    imgNode.src = canvas.toDataURL();
   };
 }

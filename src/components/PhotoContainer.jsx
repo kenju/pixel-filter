@@ -9,7 +9,9 @@ const filter = new Filter();
 
 export default function PhotoContainer() {
   function handleOnLoad({ target }) {
-    filter.process(target);
+    console.log(`handleOnLoad`)
+    // TODO: this causes infinite loop because it triggers React's update
+    // filter.process(target);
   }
 
   return (

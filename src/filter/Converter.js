@@ -146,7 +146,8 @@ export function convert({
       break;
   }
 
-  return pix;
+  pixels.data.set(pix)
+  return pixels;
 };
 
 
