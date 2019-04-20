@@ -1,3 +1,5 @@
+import { convert } from './Converter'
+
 export default class Filter {
   constructor() {
     this.canvas = {}
@@ -10,15 +12,11 @@ export default class Filter {
     let effect = img.dataset.effect;
 
     pixels = this.getPixels(img);
-    worker = new Worker('./Worker.js');
-    obj = {
-        pixels: pixels,
-        effects: effect
-    };
-    worker.postMessage(obj);
-    worker.onmessage = function (e) {
-        this.renderCanvas(img, e.data.pixels);
-    };
+    const convertedData = convert({
+      pixels: pixels,
+      effects: effect
+    })
+    this.renderCanvas(img, convertedData.data.pixels);
   }
 
   getPixels = function(img) {
