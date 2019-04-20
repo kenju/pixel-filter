@@ -1,7 +1,7 @@
 module.exports = {
-  pathPrefix: "/gatsby-sample",
+  pathPrefix: "/pixel-filter",
   siteMetadata: {
-    title: `Gatsby Sample`,
+    title: `Pixel Filter`,
   },
   plugins: [
     {

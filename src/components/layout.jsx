@@ -26,7 +26,7 @@ export default ({
         <Helmet>
           <meta charSet="utf-8" />
           <title>{data.site.siteMetadata.title}</title>
-          <link rel="canonical" href="https://kenju.github.io/gatsby-sample" />
+          <link rel="canonical" href="https://kenju.github.io/pixel-filter" />
         </Helmet>
 
         <header style={{ marginBottom: `1.5rem` }}>
@@ -37,9 +37,6 @@ export default ({
           </Link>
           <ul style={{ listStyle: `none`, float: `right` }}>
             <ListLink to="/">Home</ListLink>
-            <ListLink to="/contact/">Contact</ListLink>
-            <ListLink to="/about-css-modules/">About CSS Modules</ListLink>
-            <ListLink to="/my-files/">My Files</ListLink>
             <ListLink to="/posts/">Posts</ListLink>
           </ul>
         </header>
