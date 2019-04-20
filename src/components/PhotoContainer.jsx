@@ -3,7 +3,7 @@ import { StaticQuery, graphql } from "gatsby"
 import Img from "gatsby-image"
 
 import containerStyles from "./PhotoContainer.module.css"
-import Filter from "../filter/filter"
+import Filter from "../filter/Filter"
 
 const filter = new Filter();
 
