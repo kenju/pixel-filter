@@ -313,16 +313,16 @@ function rgb2hsl(r, g, b){
     h = s = 0; //achromatic
   } else {
     diff = max - min;
-    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    s = l > 0.5 ? diff / (2 - max - min) : diff / (max + min);
     switch(max){
       case r:
-        h = (g - b) / d + (g < b ? 6 : 0);
+        h = (g - b) / diff + (g < b ? 6 : 0);
         break;
       case g:
-        h = (b - r) / d + 2;
+        h = (b - r) / diff + 2;
         break;
       case b:
-        h = (r -g ) / d + 4;
+        h = (r -g ) / diff + 4;
         break;
     }
     h /= 6;
@@ -334,10 +334,10 @@ function hsl2rgb(h, s, v){
   let r, g, b, q, p;
 
   if( s === 0 ){
-    r = g = b = l; //achromatic
+    r = g = b = v; //achromatic
   } else {
-    q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-    p = 2 * l - q;
+    q = v < 0.5 ? v * (1 + s) : v + s - v * s;
+    p = 2 * v - q;
     r = this.hue2rgb(p, q, h + 1/3);
     g = this.hue2rgb(p, q, h);
     b = this.hue2rgb(p, q, h - 1/3);
@@ -359,7 +359,6 @@ function hue2rgb(p, q, t){
       return q;
     case t < 2/3 :
       return p + (q - p) * (2/3 - t) * 6;
-      return p;
   }
 };
 

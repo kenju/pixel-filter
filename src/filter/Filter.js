@@ -6,12 +6,8 @@ export default class Filter {
   }
 
   process(img) {
-    let pixels;
-    let worker;
-    let obj;
-    let effect = img.dataset.effect;
-
-    pixels = this.getPixels(img);
+    const effect = img.dataset.effect;
+    const pixels = this.getPixels(img);
     const convertedData = convert({
       pixels: pixels,
       effects: effect
