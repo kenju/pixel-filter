@@ -1,10 +1,6 @@
 import { convert } from './Converter'
 
 export default class Filter {
-  constructor() {
-    this.canvas = {}
-  }
-
   process(imgNode) {
     const effect = imgNode.dataset.effect;
     const pixels = this.getImageData(imgNode);
