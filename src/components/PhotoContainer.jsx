@@ -33,6 +33,7 @@ export default function PhotoContainer() {
             <img
               className='filter-image'
               src={data.fileName.childImageSharp.fixed.src}
+              dataEffect={'horizontalflip'}
               alt="random"
               onLoad={handleOnLoad}
             />
