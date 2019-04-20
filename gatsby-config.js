@@ -1,3 +1,5 @@
+const path = require(`path`)
+
 module.exports = {
   pathPrefix: "/pixel-filter",
   siteMetadata: {
@@ -33,6 +35,19 @@ module.exports = {
     },
     `gatsby-transformer-remark`,
     `gatsby-plugin-react-helmet`,
+    /**
+     * For image processing
+     * https://www.gatsbyjs.org/packages/gatsby-image/#two-types-of-responsive-images
+     */
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        name: `images`,
+        path: path.join(__dirname, `src`, `images`),
+      },
+    },
+    `gatsby-transformer-sharp`,
+    `gatsby-plugin-sharp`,
     /**
      * https://www.gatsbyjs.org/tutorial/part-eight/#-using-gatsby-plugin-offline
      * NOTE: The manifest plugin should be listed before the offline plugin so that the offline plugin can cache the created manifest.webmanifest
