@@ -12,7 +12,7 @@ export default ({ data }) => {
           a weekend project by <a href="https://kenju.netlify.com">Ken</a>.
         </p>
         <p>
-          The main motivatin is ... just for fun 😂.
+          The main motivatin is ... just for fun <span role="img" aria-label="joyful">😂</span>.
           I wanted to understand how image processing works, how image effect works, and how to manipulate image pixels via JavaScript & Canvas.
         </p>
         <p>
