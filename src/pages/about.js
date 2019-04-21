@@ -16,6 +16,9 @@ export default ({ data }) => {
           I wanted to understand how image processing works, how image effect works, and how to manipulate image pixels via JavaScript & Canvas.
         </p>
         <p>
+          If you would like to follow or file an issue, please visit <a href="https://github.com/kenju/pixel-filter">github.com/kenju/pixel-filter</a>.
+        </p>
+        <p>
           NOTE: this project was initially developed under <a href="https://github.com/kenju/instagram_js_filter">github.com/kenju/instagram_js_filter</a>.
         </p>
         <h2>Technology Stacks</h2>
