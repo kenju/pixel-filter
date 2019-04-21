@@ -4,6 +4,7 @@ module.exports = {
   pathPrefix: "/pixel-filter",
   siteMetadata: {
     title: `Pixel Filter`,
+    productionURL: `https://pixel-filter.netlify.com`,
   },
   plugins: [
     {

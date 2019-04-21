@@ -4,6 +4,29 @@ import PhotoContainer from "../components/PhotoContainer";
 export default function PhotoList() {
   const effectNames = [
     'Original',
+    /**
+     * Basic Effects
+     */
+    'Grayscale',
+    'Sepia',
+    'Luminance',
+    'Brighten',
+    'Darken',
+    'Opacity',
+    'Threshold',
+    'Nega-Posi',
+    'BrightnessContrast',
+    'Hue-Rotate',
+    'Saturate',
+    'horizontalFlip',
+    'verticalFlip',
+    'doubleFlip',
+    'horizontalMirror',
+    'verticalMirror',
+    'XYMirror',
+    /**
+     * Instagram-like Effects
+     */
     'Lark',
     'Reyes',
     'Juno',
@@ -31,23 +54,6 @@ export default function PhotoList() {
     'Walden',
     '1977',
     'Kelvin',
-    'Grayscale',
-    'Sepia',
-    'Luminance',
-    'Brighten',
-    'Darken',
-    'Opacity',
-    'Threshold',
-    'Nega-Posi',
-    'BrightnessContrast',
-    'Hue-Rotate',
-    'Saturate',
-    'horizontalFlip',
-    'verticalFlip',
-    'doubleFlip',
-    'horizontalMirror',
-    'verticalMirror',
-    'XYMirror'
   ];
 
   return (
