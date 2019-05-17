@@ -26,18 +26,14 @@
     "react-helmet": "^5.2.0"
   },
   "devDependencies": {
-    "gatsby-plugin-typography": "^2.2.13",
     "gh-pages": "^2.0.1",
-    "prettier": "^1.17.0",
-    "react-typography": "^0.16.19",
-    "typography": "^0.16.19",
-    "typography-theme-fairy-gates": "^0.16.19"
+    "prettier": "^1.17.0"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/gatsbyjs/gatsby-starter-hello-world"
+    "url": "https://github.com/kenju/pixel-filter"
   },
   "bugs": {
-    "url": "https://github.com/gatsbyjs/gatsby/issues"
+    "url": "https://github.com/kenju/pixel-filter/issues"
   }
 }
