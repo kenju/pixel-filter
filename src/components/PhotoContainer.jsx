@@ -33,15 +33,17 @@ export default function PhotoContainer({
       `}
       render={(data) =>
         <div
-          className={containerStyles.container}>
+          className={containerStyles.PhotoContainer}>
           <h4>{effectName}</h4>
-          <img
-            className='filter-image'
-            src={data.fileName.childImageSharp.fixed.src}
-            data-effect={effectName.toLowerCase()}
-            alt="random"
-            onLoad={handleOnLoad}
-          />
+          <div className={containerStyles.PhotoContainerImage}>
+            <img
+              className='filter-image'
+              src={data.fileName.childImageSharp.fixed.src}
+              data-effect={effectName.toLowerCase()}
+              alt="random"
+              onLoad={handleOnLoad}
+            />
+          </div>
         </div>
       }
     />

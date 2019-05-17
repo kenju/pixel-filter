@@ -1,4 +1,10 @@
-.container {
+.PhotoContainer {
   margin: 3rem auto;
   max-width: 600px;
+}
+
+.PhotoContainerImage {
+  width: 400px;
+  height: 250px;
+  border: 1px dashed gainsboro;
 }
