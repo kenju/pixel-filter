@@ -17,8 +17,8 @@ module.exports = {
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
-        name: "GatsbyJS",
-        short_name: "GatsbyJS",
+        name: "Pixel Filter",
+        short_name: "Pixel Filter",
         start_url: "/",
         background_color: "#6b37bf",
         theme_color: "#6b37bf",
@@ -28,7 +28,6 @@ module.exports = {
         icon: "src/images/icon.jpeg", // This path is relative to the root of the site.
       },
     },
-    `gatsby-transformer-remark`,
     `gatsby-plugin-react-helmet`,
     /**
      * For image processing

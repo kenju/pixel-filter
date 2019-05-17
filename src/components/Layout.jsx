@@ -31,14 +31,13 @@ export default ({
 
         <header style={{ marginBottom: `1.5rem` }}>
           <Link to="/" style={{ textShadow: `none`, backgroundImage: `none` }}>
-            <h3 style={{ display: `inline` }}>
+            <h1 style={{ display: `inline` }}>
               {data.site.siteMetadata.title}
-            </h3>
+            </h1>
           </Link>
           <ul style={{ listStyle: `none`, float: `right` }}>
             <ListLink to="/">Home</ListLink>
             <ListLink to="/about/">About</ListLink>
-            <ListLink to="/posts/">Posts</ListLink>
           </ul>
         </header>
         {children}
