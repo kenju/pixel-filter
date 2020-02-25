@@ -7,9 +7,7 @@
     "develop": "gatsby develop",
     "format": "prettier --write src/**/*.{js,jsx}",
     "start": "npm run develop",
-    "serve": "gatsby serve",
-    "deploy": "gatsby build --prefix-paths && gh-pages -d public",
-    "test": "echo \"Write tests! -> https://gatsby.dev/unit-testing\""
+    "serve": "gatsby serve"
   },
   "dependencies": {
     "gatsby": "^2.3.16",
@@ -19,13 +17,10 @@
     "gatsby-plugin-react-helmet": "^3.0.12",
     "gatsby-plugin-sharp": "^2.0.35",
     "gatsby-source-filesystem": "^2.0.29",
-    "gatsby-transformer-sharp": "^2.1.18",
-    "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-helmet": "^5.2.0"
   },
   "devDependencies": {
-    "gh-pages": "^2.0.1",
     "prettier": "^1.17.0"
   },
   "repository": {
